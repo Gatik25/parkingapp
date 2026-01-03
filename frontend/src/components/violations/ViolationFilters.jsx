@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Filter } from 'lucide-react';
+import { parkingLotsAPI } from '../../services/api';
 
 const ViolationFilters = ({ filters, onFiltersChange }) => {
+  const [parkingLots, setParkingLots] = useState([]);
+
+  useEffect(() => {
+    const fetchParkingLots = async () => {
+      try {
+        const response = await parkingLotsAPI.getParkingLots({ active_only: true });
+        setParkingLots(response.data || []);
+      } catch (error) {
+        console.error('Failed to load parking lots:', error);
+      }
+    };
+
+    fetchParkingLots();
+  }, []);
+
   const handleStatusChange = (e) => {
     const value = e.target.value === 'ALL' ? null : e.target.value;
     onFiltersChange({ ...filters, status: value });
+  };
+
+  const handleLotChange = (e) => {
+    const value = e.target.value === 'ALL' ? null : Number(e.target.value);
+    onFiltersChange({ ...filters, lot_id: value });
   };
 
   const handleSortChange = (e) => {
@@ -21,13 +42,13 @@ const ViolationFilters = ({ filters, onFiltersChange }) => {
         <Filter size={20} />
         <h3>Filters & Sort</h3>
       </div>
-      
+
       <div className="filters-grid">
         <div className="filter-group">
           <label htmlFor="status">Status</label>
-          <select 
-            id="status" 
-            value={filters.status || 'ALL'} 
+          <select
+            id="status"
+            value={filters.status || 'ALL'}
             onChange={handleStatusChange}
             className="filter-select"
           >
@@ -39,10 +60,27 @@ const ViolationFilters = ({ filters, onFiltersChange }) => {
         </div>
 
         <div className="filter-group">
+          <label htmlFor="lot_id">Parking Lot</label>
+          <select
+            id="lot_id"
+            value={filters.lot_id ?? 'ALL'}
+            onChange={handleLotChange}
+            className="filter-select"
+          >
+            <option value="ALL">All Lots</option>
+            {parkingLots.map((lot) => (
+              <option key={lot.id} value={lot.id}>
+                {lot.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-group">
           <label htmlFor="sort">Sort By</label>
-          <select 
-            id="sort" 
-            value={filters.sort_by || 'newest'} 
+          <select
+            id="sort"
+            value={filters.sort_by || 'newest'}
             onChange={handleSortChange}
             className="filter-select"
           >

@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1.router import api_router
+from app.core.websocket import manager
 from app.db.base import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -21,6 +22,16 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+@app.websocket("/ws/violations")
+async def violations_websocket(websocket: WebSocket):
+    await manager.connect(websocket, "violations")
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
 
 
 @app.get("/")

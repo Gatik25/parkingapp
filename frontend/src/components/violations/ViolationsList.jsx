@@ -7,7 +7,8 @@ import ViolationFilters from './ViolationFilters';
 
 const ViolationsList = () => {
   const [filters, setFilters] = useState({
-    status: null,
+    status: 'OPEN',
+    lot_id: null,
     sort_by: 'newest',
     from_date: null,
     to_date: null,
@@ -22,6 +23,7 @@ const ViolationsList = () => {
     error, 
     openCount, 
     criticalCount,
+    removingViolationIds,
     refetch, 
     updateViolation 
   } = useViolations(filters);
@@ -86,7 +88,7 @@ const ViolationsList = () => {
         
         <div className="stat-card total">
           <span className="stat-label">Total Showing</span>
-          <span className="stat-value">{violations.length}</span>
+          <span className="stat-value">{total}</span>
         </div>
       </div>
 
@@ -123,6 +125,7 @@ const ViolationsList = () => {
             <ViolationListItem
               key={violation.id}
               violation={violation}
+              isRemoving={removingViolationIds.includes(violation.id)}
               onViewDetails={handleViewDetails}
               onAcknowledge={handleAcknowledge}
               onResolve={handleResolve}

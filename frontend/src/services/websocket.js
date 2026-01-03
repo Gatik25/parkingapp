@@ -1,4 +1,16 @@
-const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8000/api/v1';
+const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8000';
+
+const getWebSocketUrl = (channel) => {
+  if (channel !== 'violations') {
+    return `${WS_BASE_URL}/ws/${channel}`;
+  }
+
+  if (WS_BASE_URL.includes('/api/v1')) {
+    return `${WS_BASE_URL}/violations/ws`;
+  }
+
+  return `${WS_BASE_URL}/ws/violations`;
+};
 
 class WebSocketService {
   constructor() {
@@ -14,7 +26,7 @@ class WebSocketService {
       return;
     }
 
-    const wsUrl = `${WS_BASE_URL}/${channel}/ws`;
+    const wsUrl = getWebSocketUrl(channel);
     this.ws = new WebSocket(wsUrl);
 
     this.ws.onopen = () => {

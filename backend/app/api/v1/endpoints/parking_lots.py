@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import asc
 from typing import List
 from app.db.base import get_db
 from app.models.parking_lot import ParkingLot
+from app.schemas.parking_lot import ParkingLotListItem
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -19,6 +21,19 @@ class OccupancyHistoryResponse(BaseModel):
     parking_lot_id: int
     parking_lot_name: str
     history: List[OccupancyHistoryPoint]
+
+
+@router.get("/", response_model=List[ParkingLotListItem])
+def list_parking_lots(
+    active_only: bool = True,
+    db: Session = Depends(get_db)
+):
+    query = db.query(ParkingLot)
+    if active_only:
+        query = query.filter(ParkingLot.is_active.is_(True))
+
+    parking_lots = query.order_by(asc(ParkingLot.name)).all()
+    return [ParkingLotListItem.model_validate(lot) for lot in parking_lots]
 
 
 @router.get("/{lot_id}/occupancy-history", response_model=OccupancyHistoryResponse)
