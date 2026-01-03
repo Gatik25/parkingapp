@@ -2,7 +2,7 @@ import React from 'react';
 import { AlertTriangle, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
-const ViolationListItem = ({ violation, onViewDetails, onAcknowledge, onResolve }) => {
+const ViolationListItem = ({ violation, isRemoving = false, onViewDetails, onAcknowledge, onResolve }) => {
   const isCritical = violation.occupancy_percentage > 110;
   
   const getStatusColor = (status) => {
@@ -32,7 +32,7 @@ const ViolationListItem = ({ violation, onViewDetails, onAcknowledge, onResolve 
   };
 
   return (
-    <div className={`violation-card ${isCritical ? 'critical' : ''}`}>
+    <div className={`violation-card ${isCritical ? 'critical' : ''} ${isRemoving ? 'removing' : ''}`}>
       <div className="violation-header">
         <div className="violation-title">
           <MapPin size={20} className="icon-primary" />

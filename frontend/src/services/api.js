@@ -28,9 +28,13 @@ export const violationsAPI = {
 };
 
 export const parkingLotsAPI = {
+  getParkingLots: (params = {}) => {
+    return api.get('/parking-lots/', { params });
+  },
+
   getOccupancyHistory: (lotId, hours = 24) => {
-    return api.get(`/parking-lots/${lotId}/occupancy-history`, { 
-      params: { hours } 
+    return api.get(`/parking-lots/${lotId}/occupancy-history`, {
+      params: { hours },
     });
   },
 };

@@ -67,11 +67,33 @@ body {
   color: var(--text-secondary);
   border-radius: 0.375rem;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
 }
 
 .nav-link:hover,
 .nav-link.active {
   background-color: var(--primary-color);
+  color: white;
+}
+
+.nav-badge {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 9999px;
+  background-color: var(--warning-color);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+  text-align: center;
+}
+
+.nav-link.has-critical .nav-badge {
+  background-color: var(--critical-color);
   color: white;
 }
 
@@ -231,6 +253,11 @@ body {
   padding: 1.5rem;
   border-left: 4px solid var(--warning-color);
   transition: all 0.3s ease;
+}
+
+.violation-card.removing {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 .violation-card.critical {
